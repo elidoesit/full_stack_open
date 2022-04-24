@@ -1,0 +1,11 @@
+Browser -> HTTP GET https://studies.cs.helsinki.fi/exampleapp/spa
+Server responds 304 not modified - >  HTML code
+
+Browser -> HTTP GET to https://studies.cs.helsinki.fi/exampleapp/main.css
+Server responds 304 not modified -> CSS code
+
+Browser - > HTTP GET to https://studies.cs.helsinki.fi/exampleapp/spa.js
+Server responds 304 not modified -> JS code
+
+Browser -> HTTP GET to https://studies.cs.helsinki.fi/exampleapp/data.json
+Server responds 304 not modified ->  JSON data
