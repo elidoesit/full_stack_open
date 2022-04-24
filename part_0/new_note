@@ -1,0 +1,16 @@
+Types in text box and press “save”
+Browser -> server HTTP POST request to https://studies.cs.helsinki.fi/exampleapp/new_note 
+Server responds with 302 redirect to /exampleapp/notes
+
+browser -> HTTP GET request https://studies.cs.helsinki.fi/exampleapp/notes
+server 200 response -> browser HTML code
+
+browser -> server HTTP GET to https://studies.cs.helsinki.fi/exampleapp/main.css
+server 200 response-> browser CSS code 
+
+browser -> HTTP GET request https://studies.cs.helsinki.fi/exampleapp/main.js
+server 200 response -> browser JS code
+
+browser -> server HTTP GET request https://studies.cs.helsinki.fi/exampleapp/data.json
+server 200 response -> browser data.json
+
