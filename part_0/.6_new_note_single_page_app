@@ -1,5 +1,0 @@
-Types in text box and press “save”
-Browser -> server HTTP POST to https://studies.cs.helsinki.fi/exampleapp/new_note_spa
-Server responds 201 created
-
-Browser executes the event handler that renders the new note to display 

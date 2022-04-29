@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react'
 import personsService from './service/persons'
 import axios from 'axios'
-///Bugs to fix
-///When name or number fields are blank app crashes
+
 
 
 const Filter = ({nameFilter,handleFilterChange }) => {
@@ -96,7 +95,6 @@ const Notification = ({ message }) => {
 const App = () => {
 
   const [persons, setPersons] = useState([])
-
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState("")
@@ -147,12 +145,11 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
   }
-   //filter in search bar
+ 
   const filteredPersons = persons.filter((persons) => {
     return persons.name.toLowerCase().includes(nameFilter.toLowerCase())
   })
 
-  //Check if name already exists, if matched in persons, alert
   const existingPerson = persons.find(
     (persons) => persons.name.toLowerCase() === newName.toLowerCase()
   )
@@ -164,15 +161,13 @@ const App = () => {
         return
       }
       
-    const removePersons = ({id}) => {
-      if (window.confirm("Do you really want to delete this person?")) {
-        personsService
-          .remove(id)
-          console.log(`${id} successfully deleted`)
-        }return (
-          (persons) => {
-          setPersons(persons.filter((persons) => persons.id !== id))}
-
+  const removePersons = ({id}) => {
+    (window.confirm("Do you really want to delete this person?")) &&
+      personsService
+        .remove(id)
+        .then(returnedPerson => {
+        setPersons(persons.filter(persons => persons.id !== id ? persons : returnedPerson))
+      }
       )}
 
   return (
