@@ -48,7 +48,7 @@ const Content = ({ persons, removePersons }) => {
      {persons.map(persons =>
         <Persons key={persons.id} 
         personsName={persons.name} 
-        personsNumber={persons.number} removePersons={removePersons}/>)}
+        personsNumber={persons.number} removePersons={() =>removePersons(persons.id)}/>)}
     </div>
  )
 }
@@ -98,15 +98,14 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [nameFilter, setNameFilter] = useState("")
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [message, setMessage] = useState(null)
   
   useEffect(() => {
-    console.log('effect')
-    personsService
-    .getAll()
-    .then(initialPersons => {
-      setPersons(initialPersons)
-    })
+    axios
+      .get('http://localhost:3001/api/persons')
+      .then(res => {
+        setPersons(res.data)
+      })
   }, [])
 
   console.log('render', persons.length, 'persons')
@@ -122,9 +121,12 @@ const App = () => {
     .create(personObject)
     .then(returnedPersons => {
       setPersons(persons.concat(returnedPersons))
-      setErrorMessage(`${newName} was successfully added`)
+      
+      setMessage(
+        `${newName} was successfully added`
+        )
       setTimeout(() => {
-        setErrorMessage(null)
+      setMessage(null)
       }, 5000)
     })
       setNewName('')
@@ -161,19 +163,28 @@ const App = () => {
         return
       }
       
-  const removePersons = ({id}) => {
-    (window.confirm("Do you really want to delete this person?")) &&
-      personsService
-        .remove(id)
-        .then(returnedPerson => {
-        setPersons(persons.filter(persons => persons.id !== id ? persons : returnedPerson))
-      }
-      )}
+  const removePersons = id => {
+    const deletedPerson = persons.find( person => person.id === id)
+    console.log(`deleting ID ${deletedPerson} now`)
+
+      if (window.confirm(`Delete this person?`)) {
+        personsService
+          .remove(id)
+          console.log(`successfully deleted ${id}`)
+          setPersons(persons.filter(person => person.id !== id))
+          setMessage(
+            `successfully deleted`
+            )
+          setTimeout(() => {
+          setMessage(null)
+          }, 5000)
+  }}
+      
 
   return (
     <div>
     <h2>Phonebook</h2>
-    <Notification message={errorMessage} />
+    <Notification message={message}/>
     <Filter
     handleFilterChange={handleFilterChange} 
     nameFilter={nameFilter}/>
