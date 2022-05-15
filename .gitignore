@@ -1,3 +1,5 @@
 .env
-logo.svg
+*logo*
 node_modules
+*manifest*
+*robots*

@@ -101,8 +101,8 @@ const App = () => {
   const [message, setMessage] = useState(null)
   
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/api/persons')
+    personsService
+      .getAll()
       .then(res => {
         setPersons(res.data)
       })
