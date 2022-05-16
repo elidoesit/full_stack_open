@@ -91,7 +91,6 @@ const Notification = ({ message }) => {
   }
 }
 
-
 const App = () => {
 
   const [persons, setPersons] = useState([])
@@ -101,11 +100,12 @@ const App = () => {
   const [message, setMessage] = useState(null)
   
   useEffect(() => {
+    console.log('effect')
     personsService
-      .getAll()
-      .then(res => {
-        setPersons(res.data)
-      })
+    .getAll()
+    .then(initialPersons => {
+      setPersons(initialPersons)
+    })
   }, [])
 
   console.log('render', persons.length, 'persons')
