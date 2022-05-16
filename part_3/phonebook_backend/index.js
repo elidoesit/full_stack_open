@@ -78,7 +78,6 @@ const generateId = () => {
     return maxId + 1
 }
 app.post('/api/persons/', (request, response) => {
-    
     const body = request.body
     console.log(body)
     const existingPerson = persons.find(
