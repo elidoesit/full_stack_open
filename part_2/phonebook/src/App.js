@@ -121,7 +121,6 @@ const App = () => {
     .create(personObject)
     .then(returnedPersons => {
       setPersons(persons.concat(returnedPersons))
-      
       setMessage(
         `${newName} was successfully added`
         )
@@ -129,10 +128,17 @@ const App = () => {
       setMessage(null)
       }, 5000)
     })
-      setNewName('')
-      setNewNumber('')
-      
-  }
+       
+      .catch(error => {
+        setMessage(`[ERROR] ${error.response.data.error}`)
+        
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+        console.log(error.response.data)
+      })
+    }
+  
 
   const handleFilterChange = (e) => {
     setNameFilter(e.target.value)
@@ -147,21 +153,10 @@ const App = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
   }
- 
+
   const filteredPersons = persons.filter((persons) => {
     return persons.name.toLowerCase().includes(nameFilter.toLowerCase())
   })
-
-  const existingPerson = persons.find(
-    (persons) => persons.name.toLowerCase() === newName.toLowerCase()
-  )
-    
-    if (existingPerson && existingPerson.number === newNumber) {
-      alert(`${newName} is already added to phonebook`)
-      setNewName("")
-      setNewNumber("")
-        return
-      }
       
   const removePersons = id => {
     const deletedPerson = persons.find( person => person.id === id)
@@ -199,7 +194,7 @@ const App = () => {
     />
     <h2>Names</h2>
 
-    <Content  
+    < Content 
     persons={filteredPersons}
     removePersons={removePersons}
    />

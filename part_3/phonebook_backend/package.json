@@ -9,8 +9,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:ui": "rm -rf build && cd /Users/edahms/full_stack_open/part_2/phonebook && npm run build && cp -R build /Users/edahms/full_stack_open/part_3/phonebook_backend/",
     "deploy": "git push heroku main",
-    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",    
-    "logs:prod": "heroku logs --tail"
+    "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -26,10 +27,11 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.0",
-    "mongoose": "^6.3.2",
+    "mongoose": "^6.3.3",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "eslint": "^8.16.0",
     "nodemon": "^2.0.16"
   }
 }

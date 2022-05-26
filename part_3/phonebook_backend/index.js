@@ -1,114 +1,86 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const morgan =require('morgan')
 const cors = require('cors')
+const Persons = require('./models/person')
+
 
 app.use(express.static('build'))
 app.use(express.json())
 app.use(cors())
 app.use(morgan('tiny'))
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
+app.post('/api/persons/', (request, response, next) => {
+  const body = request.body
+  console.log(body)
 
+  const person = new Persons ({
+    name: body.name,
+    number: body.number,
+  })
 
-app.get('/', (req, res) => {
-    res.send('<h1>Hello World!</h1>')
+  person.save().then(savedPersons => {
+    response.json(savedPersons)
   })
-  //return list of all persons
-app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    .catch(error => next(error))
+})
+app.get('/api/persons', (request, response) => {
+  Persons.find({}).then(persons => {
+    response.json(persons)
   })
-//return count of persons & Date/time
+})
 app.get('/info', (request, response) => {
-    const currentDate = new Date().toLocaleString();
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const maxId = persons.map(persons => persons.id)
-        response.send(
-            `
-            <div>
-                 <p>The phonebook has info for ${maxId.length} people</p>
-            </div>
-            <div>
-                <p>${currentDate} (${timeZone})</p>
-            </div>`)
-        })
-//get individual persons by ID
-app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    console.log(id)
-    const person = persons.find(persons => persons.id === id)
-    if (person) {
-    response.json(person)
-    } else {
-    response.status(404).end()
-    }
-    })
-   
-app.delete('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    persons = persons.filter(persons => persons.id !== id)
-    response.status(204).end()
-      })
-
-const generateId = () => {
-    const maxId = persons.length > 0
-    ? Math.max(...persons.map(persons => persons.id))
-    : 0
-    return maxId + 1
-}
-app.post('/api/persons/', (request, response) => {
-    const body = request.body
-    console.log(body)
-    const existingPerson = persons.find(
-        (persons) => persons.name.toLowerCase() === body.name.toLowerCase()
-      )
-
-    if (!body.name) {
-        return response.status(400).json({ 
-          error: 'name is missing' })
-      }
-
-    else if (!body.number) {
-        return response.status(400).json({ 
-          error: 'number is missing' })
-      }
-    else if (existingPerson && existingPerson.number === body.number) {
-        return response.status(400).json({ 
-          error: 'phonebook entries must be unique. This name/number pair exists already.' })
-      }
-    
-    const person = {
-        name: body.name,
-        number: body.number,
-        id: generateId(),
-      }
-    console.log(person)
-    persons = persons.concat(person)
-    response.json(person)
+  const currentDate = new Date().toLocaleString()
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  Persons.find({}).then(persons => {
+    response.send(
+      `<div>
+          <p>The phonebook has info for ${persons.length} people</p>
+        </div>
+        <div>
+          <p>${currentDate} (${timeZone})</p>
+        </div>`)
   })
+})
 
-  const PORT = process.env.PORT || 3001
-app.listen(PORT)
-console.log(`Server running on port ${PORT}`)
+app.delete('/api/persons/:id', (request, response) => {
+  Persons.findByIdAndRemove(request.params.id).then(persons => {
+    response.json(persons)
+  })
+})
+app.get('/api/persons/:id', (request, response, next) => {
+  Persons.findById(request.params.id)
+    .then(persons => {
+      if (persons){response.json(persons)}
+      else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
+})
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+  next(error)
+}
+app.use(errorHandler)
+
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
+
 
