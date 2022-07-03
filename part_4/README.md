@@ -1,0 +1,1 @@
+In this part, we continue to expand the back end of a blog application. The first big theme is integration testing written with Jest. After testing, the backend logic for user management and login is implemented.
